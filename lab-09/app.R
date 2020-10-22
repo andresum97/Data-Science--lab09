@@ -11,13 +11,14 @@ library(shiny)
 library(DT)
 library(ggplot2)
 
-setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
+setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
+#setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  titlePanel("Laboratorio 09"),
   #DT::dataTableOutput("sample_table")
   #plotOutput("barplot"),
   
@@ -29,7 +30,14 @@ ui <- fluidPage(
         choices = c("marca","modelo"),
       )
     ),
-    mainPanel(plotOutput("barplot"))
+    mainPanel(
+      plotOutput("barplot"),
+      br(),
+      br(),
+      h4("David Soto - 17551"),
+      h4("Guillermo Sandoval - 17"),
+      h4("Andres Urizar - 17632")
+    )
   )
 )
 
@@ -79,6 +87,20 @@ server <- function(input, output) {
   })
   
   
+  colorsMarca <- reactive({
+    importacionescol1 <- na.omit(importaciones)
+    colMarca <- distinctColorPalette(length(table(importaciones$Marca)))
+    return(colMarca)
+  })
+  
+  colorsModelo <- reactive({
+    importacionescol2 <- na.omit(importaciones)
+    colModelo <- distinctColorPalette(length(table(importaciones$Modelo)))
+    return(colModelo)
+  })
+  
+  
+  
   df_fallecidos <- reactive({
     return(fallecidos)
   })
@@ -91,12 +113,14 @@ server <- function(input, output) {
     if(input$pruebaInput == "marca"){
       barplot(df_sat_marca(), 
               names = as.vector(df_sat_marca1()), 
+              col = colorsMarca(),
               las = 2,
               main = "Marca"
       ) 
     }else{
       barplot(df_marca3(),
               names = as.vector(df_marca4()),
+              col = colorsModelo(),
               las = 2,
               main = "Modelo"
       )
