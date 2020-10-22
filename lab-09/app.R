@@ -10,26 +10,39 @@
 library(shiny)
 library(DT)
 library(ggplot2)
+library(randomcoloR)
 
 setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
+    #title = span("Laboratorio 09", styl)
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Laboratorio 09"),
     #DT::dataTableOutput("sample_table")
     #plotOutput("barplot"),
     
     sidebarLayout(
+      mainPanel(
+        h3("David Soto - 17"),
+        h3("Guillermo Sandoval - 17"),
+        h3("Andres Urizar - 17"),
+        br(),
+        br(),
+        plotOutput("barplot",width = "100%")
+        # fluidRow(
+        #   column(12, align="center",
+        # )
+      ),
       sidebarPanel(
+        helpText("Puedes visualizar entre modelos o marcas de motocicletas"),
         selectInput(
           "pruebaInput",
           "Selecciona la variable visualizar",
           choices = c("marca","modelo"),
         )
-      ),
-      mainPanel(plotOutput("barplot"))
+      )
     )
 
     # Sidebar with a slider input for number of bins 
@@ -98,6 +111,19 @@ server <- function(input, output) {
       return(marca2[,1])
     })
     
+    colorsMarca <- reactive({
+      importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
+      importaciones <- na.omit(importaciones)
+      colMarca <- distinctColorPalette(length(table(importaciones$Marca)))
+      return(colMarca)
+    })
+    
+    colorsModelo <- reactive({
+      importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
+      importaciones <- na.omit(importaciones)
+      colMarca <- distinctColorPalette(length(table(importaciones$Modelo)))
+      return(colMarca)
+    })
     #output$barplot <- renderPlot({
      #  ggplot(data=df_sat_marca())
     #})
@@ -106,14 +132,16 @@ server <- function(input, output) {
       if(input$pruebaInput == "marca"){
         barplot(df_sat_marca(), 
                 names = as.vector(df_sat_marca1()), 
+                col = colorsMarca(),
                 las = 2,
-                main = "Marca"
+                main = "Marca de motocicletas",
         ) 
       }else{
         barplot(df_marca3(),
                 names = as.vector(df_marca4()),
+                col = colorsModelo(),
                 las = 2,
-                main = "Modelo"
+                main = "Modelo de motocicletas"
         )
       }
       
