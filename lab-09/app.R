@@ -11,7 +11,7 @@ library(shiny)
 library(DT)
 library(ggplot2)
 
-#setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
+setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -31,37 +31,20 @@ ui <- fluidPage(
     ),
     mainPanel(plotOutput("barplot"))
   )
-  
-  # Sidebar with a slider input for number of bins 
-  #sidebarLayout(
-  #   sidebarPanel(
-  #      sliderInput("bins",
-  #                 "Number of bins:",
-  #                min = 1,
-  #               max = 50,
-  #              value = 30)
-  #),
-  
-  # Show a plot of the generated distribution
-  #mainPanel(
-  #  plotOutput("distPlot")
-  #)
-  #)
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  df_fallecidos <- reactive({
-    df <- read.csv("fallecidos.csv", stringsAsFactors = FALSE)
-    return(df)
-  })
+
+  
+  importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
+  fallecidos <- read.csv("fallecidos.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
   
   
   #Info para obtener la informacion del barplot
   df_sat_marca <- reactive({
-    importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
-    importaciones <- na.omit(importaciones)
-    nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+    importaciones1 <- na.omit(importaciones)
+    nuevoImportaciones = importaciones1[importaciones1$Tipo.de.Vehiculo == "MOTO",]
     marca <- data.frame(table(nuevoImportaciones$Marca))
     marca <- marca[order(-marca$Freq),]
     marca2 <- marca[1:10,]
@@ -69,9 +52,8 @@ server <- function(input, output) {
   })
   
   df_sat_marca1 <- reactive({
-    importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
-    importaciones <- na.omit(importaciones)
-    nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+    importaciones2 <- na.omit(importaciones)
+    nuevoImportaciones = importaciones2[importaciones2$Tipo.de.Vehiculo == "MOTO",]
     marca <- data.frame(table(nuevoImportaciones$Marca))
     marca <- marca[order(-marca$Freq),]
     marca2 <- marca[1:10,]
@@ -79,9 +61,8 @@ server <- function(input, output) {
   })
   
   df_marca3 <- reactive({
-    importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
-    importaciones <- na.omit(importaciones)
-    nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+    importaciones3 <- na.omit(importaciones)
+    nuevoImportaciones = importaciones3[importaciones3$Tipo.de.Vehiculo == "MOTO",]
     marca <- data.frame(table(nuevoImportaciones$Modelo.del.Vehiculo))
     marca <- marca[order(-marca$Freq),]
     marca2 <- marca[1:10,]
@@ -89,13 +70,17 @@ server <- function(input, output) {
   })
   
   df_marca4 <- reactive({
-    importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
-    importaciones <- na.omit(importaciones)
-    nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+    importaciones4 <- na.omit(importaciones)
+    nuevoImportaciones = importaciones4[importaciones4$Tipo.de.Vehiculo == "MOTO",]
     marca <- data.frame(table(nuevoImportaciones$Modelo.del.Vehiculo))
     marca <- marca[order(-marca$Freq),]
     marca2 <- marca[1:10,]
     return(marca2[,1])
+  })
+  
+  
+  df_fallecidos <- reactive({
+    return(fallecidos)
   })
   
   #output$barplot <- renderPlot({
