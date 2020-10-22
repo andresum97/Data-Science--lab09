@@ -8,41 +8,132 @@
 #
 
 library(shiny)
+library(DT)
+library(ggplot2)
+
+setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
     titlePanel("Old Faithful Geyser Data"),
+    #DT::dataTableOutput("sample_table")
+    #plotOutput("barplot"),
+    
+    sidebarLayout(
+      sidebarPanel(
+        selectInput(
+          "pruebaInput",
+          "Selecciona la variable visualizar",
+          choices = c("marca","modelo"),
+        )
+      ),
+      mainPanel(plotOutput("barplot"))
+    )
 
     # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
+    #sidebarLayout(
+     #   sidebarPanel(
+      #      sliderInput("bins",
+       #                 "Number of bins:",
+        #                min = 1,
+         #               max = 50,
+          #              value = 30)
+        #),
 
         # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
-    )
+        #mainPanel(
+         #  plotOutput("distPlot")
+        #)
+    #)
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
+    df_fallecidos <- reactive({
+        df <- read.csv("fallecidos.csv", stringsAsFactors = FALSE)
+        return(df)
+    })
+    
+    
+    #Info para obtener la informacion del barplot
+    df_sat_marca <- reactive({
+        importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
+        importaciones <- na.omit(importaciones)
+        nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+        marca <- data.frame(table(nuevoImportaciones$Marca))
+        marca2 <- marca[order(marca[, 2], decreasing=TRUE), ]
+        marca2 <- filter(marca2, marca2$Freq > 10000)
+        return(marca2[,2])
+    })
+    
+    df_sat_marca1 <- reactive({
+      importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
+      importaciones <- na.omit(importaciones)
+      nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+      marca <- data.frame(table(nuevoImportaciones$Marca))
+      marca2 <- marca[order(marca[, 2], decreasing=TRUE), ]
+      marca2 <- filter(marca2, marca2$Freq > 10000)
+      return(marca2[,1])
+    })
+    
+    df_marca3 <- reactive({
+      importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
+      importaciones <- na.omit(importaciones)
+      nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+      marca <- data.frame(table(nuevoImportaciones$Modelo.del.Vehiculo))
+      marca2 <- marca[order(marca[, 2], decreasing=TRUE), ]
+      marca2 <- filter(marca2, marca2$Freq > 10000)
+      return(marca2[,2])
+    })
+    
+    df_marca4 <- reactive({
+      importaciones <- read.csv("importacionesVehiculosSAT.csv", stringsAsFactors = FALSE, na.strings=c("", "NA"), sep = ',')
+      importaciones <- na.omit(importaciones)
+      nuevoImportaciones = importaciones[importaciones$Tipo.de.Vehiculo == "MOTO",]
+      marca <- data.frame(table(nuevoImportaciones$Modelo.del.Vehiculo))
+      marca2 <- marca[order(marca[, 2], decreasing=TRUE), ]
+      marca2 <- filter(marca2, marca2$Freq > 10000)
+      return(marca2[,1])
+    })
+    
+    #output$barplot <- renderPlot({
+     #  ggplot(data=df_sat_marca())
+    #})
+    
+    output$barplot <- renderPlot({
+      if(input$pruebaInput == "marca"){
+        barplot(df_sat_marca(), 
+                names = as.vector(df_sat_marca1()), 
+                las = 2,
+                main = "Marca"
+        ) 
+      }else{
+        barplot(df_marca3(),
+                names = as.vector(df_marca4()),
+                las = 2,
+                main = "Modelo"
+        )
+      }
+      
+    })
+    
+    
+  #  output$sample_table<- DT::renderDataTable({
+   #     df <- df_sat_marca()
+    #    DT::datatable(df)
+    #})
+    
+   # output$distPlot <- renderPlot({
         # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    #    x    <- faithful[, 2]
+     #   bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
         # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+      #  hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    #})
+    
 }
 
 # Run the application 
