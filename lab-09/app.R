@@ -11,6 +11,7 @@ library(shiny)
 library(DT)
 library(ggplot2)
 library(randomcoloR)
+library(plotrix)
 
 #setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
 setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
@@ -126,14 +127,14 @@ server <- function(input, output) {
     if(input$barplotInput == "Marca"){
       barplot(df_sat_marca(), 
               names = as.vector(df_sat_marca1()), 
-              col = colorsMarca(),
+              col = rainbow(length(as.vector(df_sat_marca1()))),
               las = 2,
               main = "Marca"
       ) 
     }else{
       barplot(df_marca3(),
               names = as.vector(df_marca4()),
-              col = colorsModelo(),
+              col = rainbow(length(as.vector(df_marca4()))),
               las = 2,
               main = "Modelo"
       )
@@ -143,16 +144,16 @@ server <- function(input, output) {
   
   output$circleplot <- renderPlot({
     if(input$circleplotInput == "Marca"){
-      barplot(df_sat_marca(), 
-              names = as.vector(df_sat_marca1()), 
-              col = colorsMarca(),
+      pie(df_sat_marca(), 
+              labels = as.vector(df_sat_marca1()), 
+              col = rainbow(length(as.vector(df_sat_marca1()))),
               las = 2,
               main = "Marca"
       ) 
     }else{
-      barplot(df_marca3(),
-              names = as.vector(df_marca4()),
-              col = colorsMarca(),
+      pie(df_marca3(),
+              labels = as.vector(df_marca4()),
+              col = rainbow(length(as.vector(df_marca4()))),
               las = 2,
               main = "Modelo"
       )
