@@ -10,35 +10,48 @@
 library(shiny)
 library(DT)
 library(ggplot2)
+library(randomcoloR)
 
-setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
-#setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
+#setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
+setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Laboratorio 09"),
+  titlePanel("Moticlismo en Guatemala - Una perspectiva desde dentro"),
   #DT::dataTableOutput("sample_table")
   #plotOutput("barplot"),
   
   sidebarLayout(
     sidebarPanel(
       selectInput(
-        "pruebaInput",
+        "barplotInput",
         "Selecciona la variable visualizar",
-        choices = c("marca","modelo"),
+        choices = c("Marca","Modelo"),
       )
     ),
     mainPanel(
       plotOutput("barplot"),
-      br(),
-      br(),
-      h4("David Soto - 17551"),
-      h4("Guillermo Sandoval - 17"),
-      h4("Andres Urizar - 17632")
     )
-  )
+  ),
+  br(),
+  br(),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(
+        "circleplotInput",
+        "Selecciona la variable visualizar",
+        choices = c("Marca","Modelo"),
+      )
+    ),
+    mainPanel(plotOutput("circleplot"))
+  ),
+  br(),
+  br(),
+  h5("David Soto - 17551", align = "right"),
+  h5("Guillermo Sandoval - 17577", align = "right"),
+  h5("Andres Urizar - 17632", align = "right"),
 )
 
 # Define server logic required to draw a histogram
@@ -110,7 +123,7 @@ server <- function(input, output) {
   #})
   
   output$barplot <- renderPlot({
-    if(input$pruebaInput == "marca"){
+    if(input$barplotInput == "Marca"){
       barplot(df_sat_marca(), 
               names = as.vector(df_sat_marca1()), 
               col = colorsMarca(),
@@ -128,6 +141,24 @@ server <- function(input, output) {
     
   })
   
+  output$circleplot <- renderPlot({
+    if(input$circleplotInput == "Marca"){
+      barplot(df_sat_marca(), 
+              names = as.vector(df_sat_marca1()), 
+              col = colorsMarca(),
+              las = 2,
+              main = "Marca"
+      ) 
+    }else{
+      barplot(df_marca3(),
+              names = as.vector(df_marca4()),
+              col = colorsMarca(),
+              las = 2,
+              main = "Modelo"
+      )
+    }
+    
+  })
   
   #  output$sample_table<- DT::renderDataTable({
   #     df <- df_sat_marca()
