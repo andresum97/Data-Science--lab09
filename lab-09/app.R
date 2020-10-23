@@ -13,14 +13,14 @@ library(ggplot2)
 library(randomcoloR)
 library(plotrix)
 
-#setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
-setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
+setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
+#setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Moticlismo en Guatemala - Una perspectiva desde dentro"),
+  titlePanel("Moticlismo en Guatemala  Una perspectiva desde dentro"),
   #DT::dataTableOutput("sample_table")
   #plotOutput("barplot"),
   
@@ -50,9 +50,9 @@ ui <- fluidPage(
   ),
   br(),
   br(),
-  h5("David Soto - 17551", align = "right"),
-  h5("Guillermo Sandoval - 17577", align = "right"),
-  h5("Andres Urizar - 17632", align = "right"),
+  h5("David Soto - 17551"),
+  h5("Guillermo Sandoval - 17577"),
+  h5("Andres Urizar - 17632"),
 )
 
 # Define server logic required to draw a histogram
@@ -113,10 +113,39 @@ server <- function(input, output) {
     return(colModelo)
   })
   
-  
-  
+  #====================== Fallecidos
+  #Datos
   df_fallecidos <- reactive({
-    return(fallecidos)
+    fallecidos_moto = fallecidos[fallecidos$tipo_veh == "4"]
+    fallecidos_f = fallecidos_moto[fallecidos_moto$fal_les == "1"]
+    fallecidos_f$depto_ocu <- mapvalues(fallecidos_f$depto_ocu, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22), c("Guatemala","El Progreso","Sacatepéquez","Chimaltenango","Escuintla","Santa Rosa","Sololá","Totonicapán","Quetzaltenango","Suchitepéquez","Retalhuleu","San Marcos","Huehuetenango","Quiché","Baja Verapaz","Alta Verapaz","Petén","Izabal","Zacapa","Chiquimula","Jalapa","Jutiapa"))
+    dept_ocu_plot<-aggregate(fallecidos_f$uno,by=list(Category=fallecidos_f$depto_ocu), FUN=count)
+    return(dept_ocu_plot$x)
+  })
+
+  #Nombre
+  df_fallecidos_nombre <- reactive({
+    fallecidos_f = fallecidos_moto[fallecidos_moto$fal_les == "1"]
+    fallecidos_f$depto_ocu <- mapvalues(fallecidos_f$depto_ocu, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22), c("Guatemala","El Progreso","Sacatepéquez","Chimaltenango","Escuintla","Santa Rosa","Sololá","Totonicapán","Quetzaltenango","Suchitepéquez","Retalhuleu","San Marcos","Huehuetenango","Quiché","Baja Verapaz","Alta Verapaz","Petén","Izabal","Zacapa","Chiquimula","Jalapa","Jutiapa"))
+    dept_ocu_plot<-aggregate(fallecidos_f$uno,by=list(Category=fallecidos_f$depto_ocu), FUN=count)
+    return(dept_ocu_plot$Category)
+  })
+  
+  #======================= Lesionados
+  #Datos
+  df_lesionados <- reactive({
+    fallecidos_l = fallecidos_moto[fallecidos_moto$fal_les == "2"]
+    fallecidos_l$depto_ocu <- mapvalues(fallecidos_f$depto_ocu, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22), c("Guatemala","El Progreso","Sacatepéquez","Chimaltenango","Escuintla","Santa Rosa","Sololá","Totonicapán","Quetzaltenango","Suchitepéquez","Retalhuleu","San Marcos","Huehuetenango","Quiché","Baja Verapaz","Alta Verapaz","Petén","Izabal","Zacapa","Chiquimula","Jalapa","Jutiapa"))
+    dept_ocu_plot<-aggregate(fallecidos_l$uno,by=list(Category=fallecidos_l$depto_ocu), FUN=count)
+    return(dept_ocu_plot$x)
+  })
+
+  #Nombre
+  df_lesionados_nombre <- reactive({
+    fallecidos_l = fallecidos_moto[fallecidos_moto$fal_les == "2"]
+    fallecidos_l$depto_ocu <- mapvalues(fallecidos_l$depto_ocu, c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22), c("Guatemala","El Progreso","Sacatepéquez","Chimaltenango","Escuintla","Santa Rosa","Sololá","Totonicapán","Quetzaltenango","Suchitepéquez","Retalhuleu","San Marcos","Huehuetenango","Quiché","Baja Verapaz","Alta Verapaz","Petén","Izabal","Zacapa","Chiquimula","Jalapa","Jutiapa"))
+    dept_ocu_plot<-aggregate(fallecidos_l$uno,by=list(Category=fallecidos_l$depto_ocu), FUN=count)
+    return(dept_ocu_plot$Category)
   })
   
   #output$barplot <- renderPlot({
