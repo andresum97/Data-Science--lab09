@@ -13,8 +13,8 @@ library(ggplot2)
 library(randomcoloR)
 library(plotrix)
 
-#setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
-setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
+setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
+#setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -34,6 +34,8 @@ ui <- fluidPage(
     ),
     mainPanel(
       plotOutput("barplot"),
+      tags$p("Según el análisis de datos realizados de las importaciones de vehículo en Guatemala,  revela que la marca que más motos comercializa en el país es Suzuki y Honda, las cuales están muy por encima del resto.  "),
+      tags$p("Ambas graficas, muestran entre las marcas de motocicletas y modelos por año de motocicletas que más se utilizan en el país")
     )
   ),
   br(),
@@ -46,7 +48,11 @@ ui <- fluidPage(
         choices = c("Fallecidos por departamento","Lesionados por departamento"),
       )
     ),
-    mainPanel(plotOutput("circleplot"))
+    mainPanel(
+      plotOutput("circleplot"),
+      tags$p("Con respecto a la incidencia en motos, es que la mayor parte de accidentes en moto ocurre en la ciudad de Guatemala, seguido por departamentos como Ecuintla y Alta Verapaz, pero en proporciones menores."),
+      tags$p("Ambas gráficas, muestran los fallecidos y lesionados por departamento de Guatemala")
+      )
   ),
   br(),
   br(),
