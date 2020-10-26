@@ -206,21 +206,22 @@ server <- function(input, output) {
     
   })
   
-  #Datos a utilizar
-  
-  importaciones1 <- na.omit(importaciones)
-  nuevoImportaciones = importaciones1[importaciones1$Tipo.de.Vehiculo == "MOTO",]
-  importaciones <- data.frame(table(nuevoImportaciones$Aduana.de.Ingreso))
-  
-  imp <- data.frame(table(nuevoImportaciones[,c('Aduana.de.Ingreso','Anio')]))
+ 
   
   #model <- lm(nuevoImportaciones$Anio ~ freq~freq)
   
   output$barPlot2 <- renderPlot({
+    #Datos a utilizar
     
+    importaciones1 <- na.omit(importaciones)
+    nuevoImportaciones = importaciones1[importaciones1$Tipo.de.Vehiculo == "MOTO",]
+    importaciones <- data.frame(table(nuevoImportaciones$Aduana.de.Ingreso))
+    
+    imp <- data.frame(table(nuevoImportaciones[,c('Aduana.de.Ingreso','Anio')]))
     tiempo <- seq(min(importaciones), max(importaciones), length.out = input$tiempo)
-    imp = subset.data.frame(imp, imp$Anio==input$tiempo)
-    barplot((table(imp)),
+    imp <- data.frame(table(nuevoImportaciones[,c('Aduana.de.Ingreso','Anio')]))
+    imp = subset.data.frame(imp, imp$Anio==2015)
+    barplot(table(imp),
             height = imp$Freq,
             col = rainbow(length(as.vector(nuevoImportaciones))),
             main='Importaciones por lugar',
