@@ -12,9 +12,12 @@ library(DT)
 library(ggplot2)
 library(randomcoloR)
 library(plotrix)
+library(leaflet)
+library(plyr)
 
-setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
+#setwd("C:/Users/alber/Documents/UVG/Septimo semestre/Mineria de Datos/Proyecto-01/Mineria_proyecto_01")
 #setwd("C:/Users/Ulises Soto/Desktop/Uriel/UVG/DataScience/Lab9")
+setwd("C:/Users/Guillermo/Desktop/SegundoSemestre/DataScience/Lab9/")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -48,12 +51,32 @@ ui <- fluidPage(
         choices = c("Fallecidos por departamento","Lesionados por departamento"),
       )
     ),
+    
     mainPanel(
       plotOutput("circleplot"),
-      tags$p("Con respecto a la incidencia en motos, es que la mayor parte de accidentes en moto ocurre en la ciudad de Guatemala, seguido por departamentos como Ecuintla y Alta Verapaz, pero en proporciones menores."),
+      tags$p("Con respecto a la incidencia en motos, es que la mayor parte de accidentes en moto ocurre en la ciudad de Guatemala, seguido por departamentos como Escuintla y Alta Verapaz, pero en proporciones menores."),
       tags$p("Ambas gráficas, muestran los fallecidos y lesionados por departamento de Guatemala")
       )
   ),
+  
+  br(),
+  br(),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput(inputId = "tiempo",
+                  label = "Anios de importacion",
+                  min = 2011,
+                  max = 2018,
+                  value = 2014,
+                  width = "250px"),
+    ),
+    mainPanel(
+      plotOutput(outputId = "barPlot2"),
+      tags$p("Con respecto a las importaciones, se puede observar que la mayor cantidad de importaciones cada anio provienen de Puerto Quetzal, seguido de la Central de Guatemala y de Express Aereo"),
+
+    )
+  ),
+  
   br(),
   br(),
   h5("David Soto - 17551", align = 'right'),
@@ -139,6 +162,10 @@ server <- function(input, output) {
     return(fall_data_l)
   })
   
+  #====================== Pruebas LEAFLET
+  
+  
+  
   #output$barplot <- renderPlot({
   #  ggplot(data=df_sat_marca())
   #})
@@ -149,14 +176,14 @@ server <- function(input, output) {
               names = as.vector(df_sat_marca1()), 
               col = rainbow(length(as.vector(df_sat_marca1()))),
               las = 2,
-              main = "Cantiiad de motocicletas por Marca en Guatemala"
+              main = "Cantidad de motocicletas por Marca en Guatemala"
       ) 
     }else{
       barplot(df_marca3(),
               names = as.vector(df_marca4()),
               col = rainbow(length(as.vector(df_marca4()))),
               las = 2,
-              main = "Cantiadad de motocicletas por Modelo en Guatemala"
+              main = "Cantidad de motocicletas por Modelo en Guatemala"
       )
     }
     
@@ -177,6 +204,54 @@ server <- function(input, output) {
       ) 
     }
     
+  })
+  
+  #Datos a utilizar
+  
+  importaciones1 <- na.omit(importaciones)
+  nuevoImportaciones = importaciones1[importaciones1$Tipo.de.Vehiculo == "MOTO",]
+  importaciones <- data.frame(table(nuevoImportaciones$Aduana.de.Ingreso))
+  
+  imp <- data.frame(table(nuevoImportaciones[,c('Aduana.de.Ingreso','Anio')]))
+  
+  #model <- lm(nuevoImportaciones$Anio ~ freq~freq)
+  
+  output$barPlot2 <- renderPlot({
+    
+    tiempo <- seq(min(importaciones), max(importaciones), length.out = input$tiempo)
+    imp = subset.data.frame(imp, imp$Anio==input$tiempo)
+    barplot((table(imp)),
+            height = imp$Freq,
+            col = rainbow(length(as.vector(nuevoImportaciones))),
+            main='Importaciones por lugar',
+            xlab='Lugar de importacion',
+            ylab='Frecuencia')
+    
+    #barplot((table(nuevoImportaciones$Aduana.de.Ingreso)),
+    #       col = rainbow(length(as.vector(nuevoImportaciones))),
+    #        main='Importaciones por lugar',
+    #        xlab='Lugar de importacion',
+    #        ylab='Frecuencia')
+    
+    #hist(importaciones, col = "#75AADB", border = "black",
+    #     xlab = "Lugar de importacion",
+    #     ylab = "Frecuencia",
+    #     main = "Histograma de importaciones")
+    
+  })
+  
+  
+  output$hist <- renderPlot({
+    hist(rnorm(input$time))
+  })
+  
+  
+  output$map <- renderLeaflet({
+    mydata = mapData()
+    leaflet(mydata) %>% 
+      setView(lng = 0, lat = 45, zoom = 2)  %>% #setting the view over ~ center of North America
+      addTiles() %>% 
+      addCircles(data = mydata, lat = ~ Lat, lng = ~ Long, weight = 1, radius = ~sqrt(Activos)*90, color = 'orange', fillOpacity = 0.5)
   })
   
   #  output$sample_table<- DT::renderDataTable({
